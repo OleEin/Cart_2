@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import classNames from 'classnames';
 
 function Concept() {
+  
   const { id } = useParams();
   const [concept, setConcept] = useState(null);
   const [activeTab, setActiveTab] = useState('overview');
@@ -18,7 +19,7 @@ function Concept() {
 
   return (
     <div className="p-4 max-w-4xl mx-auto">
-      <h1 className="text-3xl font-extrabold mb-6">{concept.name}</h1>
+      <h1 className="text-3xl font-extrabold mb-6">{concept.name} </h1>
 
       <div className="bg-white border border-gray-200 rounded-lg shadow-md">
         <div className="flex border-b">
@@ -70,8 +71,16 @@ function Concept() {
               <p>{concept.additional || 'Keine weiteren Informationen verfügbar.'}</p>
             </div>
           )}
+          
         </div>
+        
       </div>
+      <button
+                onClick={() => handleOpenModal(offer)}
+                className="bg-gray-600 text-white py-2 px-4 rounded hover:bg-gray-700" 
+              >
+                Angebot berechnen
+              </button>
     </div>
   );
 }

@@ -1,0 +1,314 @@
+import React, { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+
+function CompanyAndQuestionsForm() {
+
+  const { id } = useParams();
+
+  const navigate = useNavigate(); // Zum Navigieren auf eine andere Seite
+
+
+
+  const [companyData, setCompanyData] = useState({
+    firmenname: '',
+    strasse: '',
+    hausnummer: '',
+    plz: '',
+    ort: '',
+    ansprechpartner: '',
+    telefon: '',
+    mailadresse: '',
+  });
+
+  const [questionsData, setQuestionsData] = useState({
+    technicalEquipment: 100,
+    professionalEquipment: 100,
+    systemicEquipment: 100,
+  });
+
+  const [statusMessage, setStatusMessage] = useState('');
+  const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+
+  const handleCompanyChange = (e) => {
+    const { name, value } = e.target;
+    setCompanyData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleSliderChange = (e) => {
+    const { name, value } = e.target;
+    setQuestionsData((prevData) => ({
+      ...prevData,
+      [name]: parseInt(value, 10),
+    }));
+  };
+
+  const handleNext = () => {
+    if (currentQuestion < 2) setCurrentQuestion(currentQuestion + 1);
+  };
+
+  const handlePrevious = () => {
+    if (currentQuestion > 0) setCurrentQuestion(currentQuestion - 1);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const allData = { ...companyData, ...questionsData };
+    console.log(allData)
+
+
+
+    try {
+      const response = await fetch(`https://db.xocore.de/cart/anfrage/${id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(allData),
+      });
+
+      if (response.ok) {
+        setStatusMessage('Daten erfolgreich gesendet.');
+        console.log(response)
+        // Reset form fields
+        // setCompanyData({
+        //   firmenname: '',
+        //   strasse: '',
+        //   hausnummer: '',
+        //   plz: '',
+        //   ort: '',
+        //   ansprechpartner: '',
+        //   telefon: '',
+        //   mailadresse: '',
+        // });
+        setQuestionsData({
+          technicalEquipment: 100,
+          professionalEquipment: 100,
+          systemicEquipment: 100,
+        });
+        setCurrentQuestion(0); // Reset question navigation
+        const data = await response.json(); // Antwort als JSON parsen
+        const projektId = data.projektId; // projektId aus der Antwort extrahieren
+        navigate(`/people/${projektId}`); // Weiterleitung nach der Ladezeit
+
+
+      } else {
+        setStatusMessage('Fehler beim Senden der Daten.');
+      }
+    } catch (error) {
+      console.error('Fehler:', error);
+      setStatusMessage('Fehler beim Senden der Daten.');
+    }
+  };
+
+  const checkFormCompletion = () => {
+    const allFieldsFilled = Object.values(companyData).every((value) => value !== '') &&
+                            Object.values(questionsData).every((value) => value !== null);
+    setIsSubmitDisabled(!allFieldsFilled);
+  };
+
+  React.useEffect(() => {
+    checkFormCompletion();
+  }, [companyData, questionsData]);
+
+  const questionLabels = [
+    'Wie ist die technische Ausstattung?',
+    'Wie ist die fachliche Ausstattung?',
+    'Wie ist die systemische Ausstattung?',
+  ];
+
+  const sliderNames = [
+    'technicalEquipment',
+    'professionalEquipment',
+    'systemicEquipment',
+  ];
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6">
+      <div className="bg-white shadow-lg rounded-lg w-full max-w-4xl p-6 space-y-8">
+        <h2 className="text-3xl font-bold text-center">Firmendaten</h2> {id}
+
+        {/* Questions Section */}
+        <div className="flex flex-col items-center space-y-4">
+          <h3 className="text-xl font-semibold text-gray-700">{questionLabels[currentQuestion]}</h3>
+          <input
+            type="range"
+            name={sliderNames[currentQuestion]}
+            min="0"
+            max="120"
+            value={questionsData[sliderNames[currentQuestion]]}
+            onChange={handleSliderChange}
+            className="w-full accent-red-600"
+          />
+          <div className="flex justify-between w-full text-xs text-gray-500">
+            <span>Entwicklungsbedarf</span>
+            <span>Optimierungsbedarf</span>
+            <span>Läuft Bestens</span>
+          </div>
+
+          {/* Progress Dots */}
+          <div className="flex space-x-2 mt-6">
+            {questionLabels.map((_, index) => (
+              <div
+                key={index}
+                className={`w-3 h-3 rounded-full ${
+                  index === currentQuestion ? 'bg-red-600' : 'bg-gray-300'
+                }`}
+              ></div>
+            ))}
+          </div>
+
+          {/* Navigation Buttons */}
+          <div className="flex justify-between w-full mt-4">
+            {currentQuestion > 0 && (
+              <button
+                onClick={handlePrevious}
+                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg"
+              >
+                Zurück
+              </button>
+            )}
+            {currentQuestion < 2 && (
+              <button
+                onClick={handleNext}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg"
+              >
+                Weiter
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Company Data Section */}
+        <form onSubmit={handleSubmit} className="space-y-4 mt-8">
+          <h3 className="text-xl font-semibold text-gray-700">Firmenangaben </h3>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Firmenname</label>
+            <input
+              type="text"
+              name="firmenname"
+              value={companyData.firmenname}
+              onChange={handleCompanyChange}
+              className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+              required
+              disabled={currentQuestion !== 2}
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Straße</label>
+              <input
+                type="text"
+                name="strasse"
+                value={companyData.strasse}
+                onChange={handleCompanyChange}
+                className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+                required
+                disabled={currentQuestion !== 2}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Hausnummer</label>
+              <input
+                type="text"
+                name="hausnummer"
+                value={companyData.hausnummer}
+                onChange={handleCompanyChange}
+                className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+                required
+                disabled={currentQuestion !== 2}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Ansprechpartner</label>
+            <input
+              type="text"
+              name="ansprechpartner"
+              value={companyData.ansprechpartner}
+              onChange={handleCompanyChange}
+              className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+              required
+              disabled={currentQuestion !== 2}
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700">PLZ</label>
+              <input
+                type="text"
+                name="plz"
+                value={companyData.plz}
+                onChange={handleCompanyChange}
+                className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+                required
+                disabled={currentQuestion !== 2}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Ort</label>
+              <input
+                type="text"
+                name="ort"
+                value={companyData.ort}
+                onChange={handleCompanyChange}
+                className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+                required
+                disabled={currentQuestion !== 2}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Telefon</label>
+            <input
+              type="text"
+              name="telefon"
+              value={companyData.telefon}
+              onChange={handleCompanyChange}
+              className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+              required
+              disabled={currentQuestion !== 2}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Mailadresse</label>
+            <input
+              type="email"
+              name="mailadresse"
+              value={companyData.mailadresse}
+              onChange={handleCompanyChange}
+              className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+              required
+              disabled={currentQuestion !== 2}
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="w-full bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700"
+            disabled={isSubmitDisabled}
+          >
+            Speichern
+          </button>
+
+          {statusMessage && (
+            <p className="mt-4 text-sm text-gray-700">{statusMessage}</p>
+          )}
+        </form>
+      </div>
+    </div>
+  );
+}
+
+export default CompanyAndQuestionsForm;
