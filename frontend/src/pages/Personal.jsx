@@ -1,22 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
 function CompanyPeople() {
-
   const { id } = useParams();
-  const navigate = useNavigate(); // Zum Navigieren auf eine andere Seite
+  const navigate = useNavigate();
 
-
-
-  const [companyData, setCompanyData] = useState({
-    teamname: '',
-    teamnotice: '',
-    teilnehmer: '',
-    internetrainer: '',
-  });
-
-
+  const [companyData, setCompanyData] = useState({});
+  const [questions, setQuestions] = useState([]);
   const [statusMessage, setStatusMessage] = useState('');
+  const [validationErrors, setValidationErrors] = useState([]);
+
+  // Daten aus dem API-Endpunkt abrufen
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        const response = await fetch(`https://db.xocore.de/cart/questions/people/${id}`);
+        if (response.ok) {
+          const data = await response.json();
+          setQuestions(data);
+
+          const initialData = data.reduce((acc, question) => {
+            acc[question.key] = '';
+            return acc;
+          }, {});
+          setCompanyData(initialData);
+        } else {
+          console.error('Fehler beim Abrufen der Fragen.');
+        }
+      } catch (error) {
+        console.error('Fehler beim Abrufen der Fragen:', error);
+      }
+    };
+
+    fetchQuestions();
+  }, [id]);
 
   const handleCompanyChange = (e) => {
     const { name, value } = e.target;
@@ -26,108 +43,109 @@ function CompanyPeople() {
     }));
   };
 
+  const validateFields = () => {
+    const errors = questions.filter(
+      (question) => !companyData[question.key]?.trim()
+    );
 
+    if (errors.length > 0) {
+      setValidationErrors(errors);
+      return false;
+    }
 
+    setValidationErrors([]);
+    return true;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const allData = { ...companyData, };
-    console.log(allData);
+    if (!validateFields()) {
+      setStatusMessage('Bitte alle Fragen beantworten.');
+      return;
+    }
+
+    const formattedData = questions.reduce((acc, question) => {
+      acc[question.prio] = companyData[question.key] || '';
+      return acc;
+    }, {});
 
     try {
       const response = await fetch(`https://db.xocore.de/cart/anfrage/people/${id}`, {
-        method: 'PUT',
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(allData),
+        body: JSON.stringify(formattedData),
       });
 
       if (response.ok) {
-        setStatusMessage('Daten erfolgreich gesendet.');
-        setCompanyData({
-          teamname: '',
-          teamnotice: '',
-          teilnehmer: '',
-          internetrainer: '',
-        });
-        navigate(`/loading/1`); // Weiterleitung nach der Ladezeit
+        const responseData = await response.json(); // Nimm an, dass die API hier die `offer_id` zurückgibt
+        const offerId = responseData.offer_id;
 
+        if (offerId) {
+          setStatusMessage('Daten erfolgreich gesendet.');
+          setCompanyData(
+            questions.reduce((acc, question) => {
+              acc[question.key] = '';
+              return acc;
+            }, {})
+          );
+          navigate(`/loading/${offerId}`);
+        } else {
+          setStatusMessage('Fehler: Keine offer_id zurückgegeben.');
+        }
       } else {
         setStatusMessage('Fehler beim Senden der Daten.');
       }
     } catch (error) {
-      console.error('Fehler:', error);
+      console.error('Fehler beim Senden der Daten:', error);
       setStatusMessage('Fehler beim Senden der Daten.');
     }
   };
 
-
-
-
-
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6">
       <div className="bg-white shadow-lg rounded-lg w-full max-w-4xl p-6 space-y-8">
-        <h2 className="text-3xl font-bold text-center">Firmendaten {id}</h2>
+        <h2 className="text-3xl font-bold text-center">Dein Team</h2>
 
-
-
-        {/* Company Data Section */}
         <form onSubmit={handleSubmit} className="space-y-4 mt-8">
           <h3 className="text-xl font-semibold text-gray-700">Personaldaten (People)</h3>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Name des Teams</label>
-            <input
-              type="text"
-              name="teamname"
-              value={companyData.teamname}
-              onChange={handleCompanyChange}
-              className="mt-1 block w-full border border-gray-300 rounded-md p-2"
-              required
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Anzahl der Teilnehmer</label>
-              <input
-                type="number"
-                name="teilnehmer"
-                value={companyData.teilnehmer}
-                onChange={handleCompanyChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md p-2"
-                required
-              />
+          {questions.map((question) => (
+            <div key={question.key}>
+              <label className="block text-sm font-medium text-gray-700">{question.label}</label>
+              {question.type === 'textarea' ? (
+                <textarea
+                  name={question.key}
+                  value={companyData[question.key] || ''}
+                  onChange={handleCompanyChange}
+                  className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+                  required
+                />
+              ) : (
+                <input
+                  type={question.type}
+                  name={question.key}
+                  value={companyData[question.key] || ''}
+                  onChange={handleCompanyChange}
+                  className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+                  required
+                />
+              )}
             </div>
+          ))}
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Anzahl der internen Trainer</label>
-              <input
-                type="number"
-                name="internetrainer"
-                value={companyData.internetrainer}
-                onChange={handleCompanyChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md p-2"
-                required
-              />
+          {validationErrors.length > 0 && (
+            <div className="text-red-600 text-sm">
+              <p>Bitte die folgenden Fragen beantworten:</p>
+              <ul className="list-disc ml-6">
+                {validationErrors.map((error) => (
+                  <li key={error.key}>{error.label}</li>
+                ))}
+              </ul>
             </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Was ist sonst noch wichtig?</label>
-            <textarea
-              type="text"
-              name="teamnotice"
-              value={companyData.teamnotice}
-              onChange={handleCompanyChange}
-              className="mt-1 block w-full border border-gray-300 rounded-md p-2"
-              required
-            />
-          </div>
+          )}
 
           <button
             type="submit"

@@ -5,8 +5,9 @@ import { FaHome, FaInfoCircle, FaUser, FaBuilding, FaListAlt, FaFileAlt } from '
 const steps = [
     { name: 'Konzept', path: '/concept/:id', icon: <FaHome /> },
     // { name: 'Detailkonzept', path: '/step4', icon: <FaInfoCircle /> },
+    { name: 'Dein Team', path: '/people/:id', icon: <FaUser /> },
+
     { name: 'Firma', path: '/firma/:id', icon: <FaBuilding /> },
-    { name: 'Personal', path: '/people/:id', icon: <FaUser /> },
     { name: 'Übersicht', path: '/products', icon: <FaListAlt /> },
     { name: 'Angebot', path: '/step5', icon: <FaFileAlt /> }
   ];
