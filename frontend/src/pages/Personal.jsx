@@ -59,17 +59,19 @@ function CompanyPeople() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     if (!validateFields()) {
       setStatusMessage('Bitte alle Fragen beantworten.');
       return;
     }
-
-    const formattedData = questions.reduce((acc, question) => {
-      acc[question.prio] = companyData[question.key] || '';
-      return acc;
-    }, {});
-
+  
+    // Daten als Array formatieren
+    const formattedData = questions.map((question) => ({
+      prio: question.prio,
+      key: question.key,
+      value: companyData[question.key] || '',
+    }));
+  
     try {
       const response = await fetch(`https://db.xocore.de/cart/anfrage/people/${id}`, {
         method: 'POST',
@@ -78,11 +80,11 @@ function CompanyPeople() {
         },
         body: JSON.stringify(formattedData),
       });
-
+      console.log(formattedData); // Logs die gesendeten Daten
       if (response.ok) {
-        const responseData = await response.json(); // Nimm an, dass die API hier die `offer_id` zurückgibt
+        const responseData = await response.json(); // Erwartet eine `offer_id` in der Antwort
         const offerId = responseData.offer_id;
-
+  
         if (offerId) {
           setStatusMessage('Daten erfolgreich gesendet.');
           setCompanyData(
@@ -91,7 +93,7 @@ function CompanyPeople() {
               return acc;
             }, {})
           );
-          navigate(`/loading/${offerId}`);
+          navigate(`/firma/${offerId}`);
         } else {
           setStatusMessage('Fehler: Keine offer_id zurückgegeben.');
         }
@@ -103,6 +105,8 @@ function CompanyPeople() {
       setStatusMessage('Fehler beim Senden der Daten.');
     }
   };
+  
+  
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6">
@@ -110,7 +114,7 @@ function CompanyPeople() {
         <h2 className="text-3xl font-bold text-center">Dein Team</h2>
 
         <form onSubmit={handleSubmit} className="space-y-4 mt-8">
-          <h3 className="text-xl font-semibold text-gray-700">Personaldaten (People)</h3>
+          <h3 className="text-xl font-semibold text-gray-700">Teamdaten (People)</h3>
 
           {questions.map((question) => (
             <div key={question.key}>

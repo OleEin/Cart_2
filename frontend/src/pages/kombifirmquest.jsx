@@ -2,12 +2,8 @@ import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
 function CompanyAndQuestionsForm() {
-
   const { id } = useParams();
-
   const navigate = useNavigate(); // Zum Navigieren auf eine andere Seite
-
-
 
   const [companyData, setCompanyData] = useState({
     firmenname: '',
@@ -28,7 +24,6 @@ function CompanyAndQuestionsForm() {
 
   const [statusMessage, setStatusMessage] = useState('');
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
-  const [currentQuestion, setCurrentQuestion] = useState(0);
 
   const handleCompanyChange = (e) => {
     const { name, value } = e.target;
@@ -46,20 +41,9 @@ function CompanyAndQuestionsForm() {
     }));
   };
 
-  const handleNext = () => {
-    if (currentQuestion < 2) setCurrentQuestion(currentQuestion + 1);
-  };
-
-  const handlePrevious = () => {
-    if (currentQuestion > 0) setCurrentQuestion(currentQuestion - 1);
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const allData = { ...companyData, ...questionsData };
-    console.log(allData)
-
-
 
     try {
       const response = await fetch(`https://db.xocore.de/cart/anfrage/${id}`, {
@@ -72,29 +56,9 @@ function CompanyAndQuestionsForm() {
 
       if (response.ok) {
         setStatusMessage('Daten erfolgreich gesendet.');
-        console.log(response)
-        // Reset form fields
-        // setCompanyData({
-        //   firmenname: '',
-        //   strasse: '',
-        //   hausnummer: '',
-        //   plz: '',
-        //   ort: '',
-        //   ansprechpartner: '',
-        //   telefon: '',
-        //   mailadresse: '',
-        // });
-        setQuestionsData({
-          technicalEquipment: 100,
-          professionalEquipment: 100,
-          systemicEquipment: 100,
-        });
-        setCurrentQuestion(0); // Reset question navigation
-        const data = await response.json(); // Antwort als JSON parsen
-        const projektId = data.projektId; // projektId aus der Antwort extrahieren
-        navigate(`/people/${projektId}`); // Weiterleitung nach der Ladezeit
-
-
+        const data = await response.json();
+        const projektId = data.projektId;
+        navigate(`/people/${projektId}`);
       } else {
         setStatusMessage('Fehler beim Senden der Daten.');
       }
@@ -129,63 +93,36 @@ function CompanyAndQuestionsForm() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6">
       <div className="bg-white shadow-lg rounded-lg w-full max-w-4xl p-6 space-y-8">
-        <h2 className="text-3xl font-bold text-center">Firmendaten</h2> {id}
+        <h2 className="text-3xl font-bold text-center">Firmendaten</h2>
 
         {/* Questions Section */}
         <div className="flex flex-col items-center space-y-4">
-          <h3 className="text-xl font-semibold text-gray-700">{questionLabels[currentQuestion]}</h3>
-          <input
-            type="range"
-            name={sliderNames[currentQuestion]}
-            min="0"
-            max="120"
-            value={questionsData[sliderNames[currentQuestion]]}
-            onChange={handleSliderChange}
-            className="w-full accent-red-600"
-          />
-          <div className="flex justify-between w-full text-xs text-gray-500">
-            <span>Entwicklungsbedarf</span>
-            <span>Optimierungsbedarf</span>
-            <span>Läuft Bestens</span>
-          </div>
-
-          {/* Progress Dots */}
-          <div className="flex space-x-2 mt-6">
-            {questionLabels.map((_, index) => (
-              <div
-                key={index}
-                className={`w-3 h-3 rounded-full ${
-                  index === currentQuestion ? 'bg-red-600' : 'bg-gray-300'
-                }`}
-              ></div>
-            ))}
-          </div>
-
-          {/* Navigation Buttons */}
-          <div className="flex justify-between w-full mt-4">
-            {currentQuestion > 0 && (
-              <button
-                onClick={handlePrevious}
-                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg"
-              >
-                Zurück
-              </button>
-            )}
-            {currentQuestion < 2 && (
-              <button
-                onClick={handleNext}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg"
-              >
-                Weiter
-              </button>
-            )}
-          </div>
+          {questionLabels.map((label, index) => (
+            <div key={index} className="w-full">
+              <h3 className="text-xl font-semibold text-gray-700">{label}</h3>
+              <input
+                type="range"
+                name={sliderNames[index]}
+                min="0"
+                max="120"
+                value={questionsData[sliderNames[index]]}
+                onChange={handleSliderChange}
+                className="w-full accent-red-600"
+              />
+              <div className="flex justify-between w-full text-xs text-gray-500">
+                <span>Entwicklungsbedarf</span>
+                <span>Optimierungsbedarf</span>
+                <span>Läuft Bestens</span>
+              </div>
+            </div>
+          ))}
         </div>
 
         {/* Company Data Section */}
         <form onSubmit={handleSubmit} className="space-y-4 mt-8">
           <h3 className="text-xl font-semibold text-gray-700">Firmenangaben </h3>
 
+          {/* Form Fields */}
           <div>
             <label className="block text-sm font-medium text-gray-700">Firmenname</label>
             <input
@@ -195,7 +132,6 @@ function CompanyAndQuestionsForm() {
               onChange={handleCompanyChange}
               className="mt-1 block w-full border border-gray-300 rounded-md p-2"
               required
-              disabled={currentQuestion !== 2}
             />
           </div>
 
@@ -209,7 +145,6 @@ function CompanyAndQuestionsForm() {
                 onChange={handleCompanyChange}
                 className="mt-1 block w-full border border-gray-300 rounded-md p-2"
                 required
-                disabled={currentQuestion !== 2}
               />
             </div>
 
@@ -222,7 +157,6 @@ function CompanyAndQuestionsForm() {
                 onChange={handleCompanyChange}
                 className="mt-1 block w-full border border-gray-300 rounded-md p-2"
                 required
-                disabled={currentQuestion !== 2}
               />
             </div>
           </div>
@@ -236,7 +170,6 @@ function CompanyAndQuestionsForm() {
               onChange={handleCompanyChange}
               className="mt-1 block w-full border border-gray-300 rounded-md p-2"
               required
-              disabled={currentQuestion !== 2}
             />
           </div>
 
@@ -250,7 +183,6 @@ function CompanyAndQuestionsForm() {
                 onChange={handleCompanyChange}
                 className="mt-1 block w-full border border-gray-300 rounded-md p-2"
                 required
-                disabled={currentQuestion !== 2}
               />
             </div>
 
@@ -263,7 +195,6 @@ function CompanyAndQuestionsForm() {
                 onChange={handleCompanyChange}
                 className="mt-1 block w-full border border-gray-300 rounded-md p-2"
                 required
-                disabled={currentQuestion !== 2}
               />
             </div>
           </div>
@@ -277,7 +208,6 @@ function CompanyAndQuestionsForm() {
               onChange={handleCompanyChange}
               className="mt-1 block w-full border border-gray-300 rounded-md p-2"
               required
-              disabled={currentQuestion !== 2}
             />
           </div>
 
@@ -290,7 +220,6 @@ function CompanyAndQuestionsForm() {
               onChange={handleCompanyChange}
               className="mt-1 block w-full border border-gray-300 rounded-md p-2"
               required
-              disabled={currentQuestion !== 2}
             />
           </div>
 
