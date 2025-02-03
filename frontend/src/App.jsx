@@ -7,6 +7,12 @@ import Overview from './pages/Overview';
 import CompanyAndQuestionsForm from './pages/kombifirmquest';
 import CompanyPeople from './pages/Personal';
 import LoadingScreen from './pages/loading';
+import OfferPage from './pages/OfferPage';
+import Concepts from'./pages/Concepts';
+import AllOrders from './pages/Offers';
+import OfferEditDetails from './pages/EditOfferPositions';
+import AdminPage from './pages/HomeAdmin';
+import NotFound from './pages/404';
 
 function App() {
   const currentStep = 0; // Beispiel für den aktuellen Schritt
@@ -19,12 +25,32 @@ function App() {
           <Routes>
             <Route path="/products" element={<Products />} />
             <Route path="/concept/:id" element={<Concept />} /> {/* Route für das Konzept */}
+            <Route path="/concepts" element={<Concepts />} /> {/* Route für das Konzept */}
+
             <Route path="/overview" element={<Overview />} />
+            <Route path="/overview/:id" element={<Overview />} />
+
             <Route path="/firmA" element={<CompanyAndQuestionsForm/>}/>
             <Route path="/firma/:id" element={<CompanyAndQuestionsForm/>}/>
 
             <Route path="/people" element={<CompanyPeople/>}/>
             <Route path="/loading/:id" element={<LoadingScreen/>}/>
+            <Route path="/Offers" element={<OfferPage/>}/>
+            <Route path="/Admin" element={<AdminPage/>}/>
+
+
+
+            <Route path="/Admin" element={<AdminPage/>}/>
+            <Route path="/admin/alloffers" element={<AllOrders/>}/>
+            <Route path="/admin/newoffer" element={<NotFound/>}/>
+            <Route path="/admin/products" element={<NotFound/>}/>
+
+
+            <Route path="/admin/offer/edit/:id" element={<OfferEditDetails/>}/>
+
+
+
+
 
             <Route path="/people/:id" element={<CompanyPeople/>}/>
 

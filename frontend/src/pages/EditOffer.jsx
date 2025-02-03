@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 
-function AllOffers() {
+function EditOffer() {
   const [offers, setOffers] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedConcept, setSelectedConcept] = useState('');
@@ -113,14 +113,14 @@ function AllOffers() {
             {filteredOffers.length > 0 ? (
               filteredOffers.map(offer => (
                 <tr key={offer.id} className="border-b hover:bg-gray-50">
-                  <td className="p-2">{offer.offer_partner}({offer.offer_id})</td>
+                  <td className="p-2">{offer.offer_partner} ({offer.offer_id})</td>
                   <td className="p-2">{offer.offer_sum} €</td>
                   <td className="p-2">{offer.offer_teilnehmer}</td>
                   <td className="p-2">{offer.offer_concept}</td>
                   <td className="p-2">{offer.offer_status}</td>
                   <td className="p-2 text-center">
                     <button
-                      onClick={() => window.location.href = `/admin/offer/edit/${offer.offer_id}`}
+                      onClick={() => window.location.href = `/admin/offer/edit/${offer.id}`}
                       className="text-blue-500 hover:text-blue-700 mr-3"
                     >
                       <FaEdit size={18} />
@@ -174,4 +174,4 @@ function AllOffers() {
   );
 }
 
-export default AllOffers;
+export default EditOffer;

@@ -2,15 +2,22 @@ import React from 'react';
 import { Link } from 'react-router-dom'; // Import for routing
 import { FaHome, FaInfoCircle, FaUser, FaBuilding, FaListAlt, FaFileAlt } from 'react-icons/fa';
 
-const steps = [
-    { name: 'Konzept', path: '/concept/:id', icon: <FaHome /> },
-    // { name: 'Detailkonzept', path: '/step4', icon: <FaInfoCircle /> },
-    { name: 'Dein Team', path: '/people/:id', icon: <FaUser /> },
 
-    { name: 'Firma', path: '/firma/:id', icon: <FaBuilding /> },
-    { name: 'Übersicht', path: '/products', icon: <FaListAlt /> },
-    { name: 'Angebot', path: '/step5', icon: <FaFileAlt /> }
+
+const concept = localStorage.getItem("concept");
+const offer = localStorage.getItem("offer");
+
+const steps = [
+    // { name: 'Konzept', path: `/concept/${concept}`, icon: <FaHome /> },
+    // { name: 'Detailkonzept', path: '/step4', icon: <FaInfoCircle /> },
+    { name: 'Dein Team', path: `/people/${concept}`, icon: <FaUser /> },
+
+    { name: 'Dein Arbeitsplatz', path: `/people/${offer}`, icon: <FaBuilding /> },
+    { name: 'Dein Paket', path: '/products', icon: <FaListAlt /> },
+    { name: 'Dein Angebot', path: `/overview/${offer}`, icon: <FaFileAlt /> }
   ];
+
+
 
 const NavigationBar = ({ currentStep }) => {
   return (

@@ -1,25 +1,30 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import classNames from 'classnames';
 
 function Concept() {
+
+  const navigate = useNavigate();
+  const coneptid = localStorage.getItem("concept");
+  const id = localStorage.getItem("concept");
+
   
-  const { id } = useParams();
   const [concept, setConcept] = useState(null);
   const [activeTab, setActiveTab] = useState('overview');
 
   useEffect(() => {
-    fetch(`https://db.xocore.de/cart/product/${id}`)
+    fetch(`https://db.xocore.de/cart/concept/${coneptid}`)
       .then(response => response.json())
       .then(data => setConcept(data))
       .catch(error => console.error('Error fetching concept:', error));
   }, [id]);
 
   if (!concept) return <div>Loading...</div>;
+  console.log(concept);
 
   return (
     <div className="p-4 max-w-4xl mx-auto">
-      <h1 className="text-3xl font-extrabold mb-6">{concept.name} </h1>
+      <h1 className="text-3xl font-extrabold mb-6">{concept.concept_name} </h1>
 
       <div className="bg-white border border-gray-200 rounded-lg shadow-md">
         <div className="flex border-b">
@@ -41,7 +46,7 @@ function Concept() {
           >
             Details
           </button>
-          <button
+          {/* <button
             className={classNames('p-4 text-lg font-medium', {
               'text-red-500 border-b-2 border-red-500': activeTab === 'additional',
               'text-gray-500': activeTab !== 'additional'
@@ -49,34 +54,34 @@ function Concept() {
             onClick={() => setActiveTab('additional')}
           >
             Weitere Informationen
-          </button>
+          </button> */}
         </div>
 
         <div className="p-4">
           {activeTab === 'overview' && (
             <div>
               <h2 className="text-2xl font-semibold mb-4">Übersicht</h2>
-              <p>{concept.overview || 'Keine Übersicht verfügbar.'}</p>
+              <p>{concept.concept_description || 'Keine Übersicht verfügbar.'}</p>
             </div>
           )}
           {activeTab === 'details' && (
             <div>
               <h2 className="text-2xl font-semibold mb-4">Details</h2>
-              <p>{concept.details || 'Keine Details verfügbar.'}</p>
+              <p>{concept.concept_details || 'Keine Details verfügbar.'}</p>
             </div>
           )}
-          {activeTab === 'additional' && (
+          {/* {activeTab === 'additional' && (
             <div>
               <h2 className="text-2xl font-semibold mb-4">Weitere Informationen</h2>
               <p>{concept.additional || 'Keine weiteren Informationen verfügbar.'}</p>
             </div>
           )}
-          
+           */}
         </div>
         
       </div>
       <button
-                onClick={() => handleOpenModal(offer)}
+                onClick={() =>         navigate(`/people/${id}`)              }
                 className="bg-gray-600 text-white py-2 px-4 rounded hover:bg-gray-700" 
               >
                 Angebot berechnen

@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
 function CompanyAndQuestionsForm() {
   const { id } = useParams();
-  const navigate = useNavigate(); // Zum Navigieren auf eine andere Seite
+  const navigate = useNavigate();
 
   const [companyData, setCompanyData] = useState({
     firmenname: '',
@@ -17,13 +17,32 @@ function CompanyAndQuestionsForm() {
   });
 
   const [questionsData, setQuestionsData] = useState({
-    technicalEquipment: 100,
-    professionalEquipment: 100,
-    systemicEquipment: 100,
+    question1: 1,
+    question2: 1,
+    question3: 1,
   });
 
+  const [questionLabels, setQuestionLabels] = useState([]);
   const [statusMessage, setStatusMessage] = useState('');
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
+
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        const response = await fetch(`https://db.xocore.de/cart/questions/offer/${id}`);
+        if (response.ok) {
+          const data = await response.json();
+          setQuestionLabels(data.map((q) => q.description));
+        } else {
+          setStatusMessage('Fehler beim Abrufen der Fragen.');
+        }
+      } catch (error) {
+        console.error('Fehler:', error);
+        setStatusMessage('Fehler beim Abrufen der Fragen.');
+      }
+    };
+    fetchQuestions();
+  }, [id]);
 
   const handleCompanyChange = (e) => {
     const { name, value } = e.target;
@@ -58,7 +77,7 @@ function CompanyAndQuestionsForm() {
         setStatusMessage('Daten erfolgreich gesendet.');
         const data = await response.json();
         const projektId = data.projektId;
-        navigate(`/people/${projektId}`);
+        navigate(`/loading/${id}`);
       } else {
         setStatusMessage('Fehler beim Senden der Daten.');
       }
@@ -68,59 +87,51 @@ function CompanyAndQuestionsForm() {
     }
   };
 
-  const checkFormCompletion = () => {
-    const allFieldsFilled = Object.values(companyData).every((value) => value !== '') &&
-                            Object.values(questionsData).every((value) => value !== null);
+  useEffect(() => {
+    const allFieldsFilled =
+      Object.values(companyData).every((value) => value !== '') &&
+      Object.values(questionsData).every((value) => value !== null);
     setIsSubmitDisabled(!allFieldsFilled);
-  };
-
-  React.useEffect(() => {
-    checkFormCompletion();
   }, [companyData, questionsData]);
-
-  const questionLabels = [
-    'Wie ist die technische Ausstattung?',
-    'Wie ist die fachliche Ausstattung?',
-    'Wie ist die systemische Ausstattung?',
-  ];
-
-  const sliderNames = [
-    'technicalEquipment',
-    'professionalEquipment',
-    'systemicEquipment',
-  ];
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-6">
       <div className="bg-white shadow-lg rounded-lg w-full max-w-4xl p-6 space-y-8">
         <h2 className="text-3xl font-bold text-center">Firmendaten</h2>
+        <h5 className="text-3xl font-bold text-center">
+          Schätze bitte im Folgenden kurz die Teilnehmerkompetenz für dein Team ein
+        </h5>
 
         {/* Questions Section */}
-        <div className="flex flex-col items-center space-y-4">
-          {questionLabels.map((label, index) => (
-            <div key={index} className="w-full">
-              <h3 className="text-xl font-semibold text-gray-700">{label}</h3>
-              <input
-                type="range"
-                name={sliderNames[index]}
-                min="0"
-                max="120"
-                value={questionsData[sliderNames[index]]}
-                onChange={handleSliderChange}
-                className="w-full accent-red-600"
-              />
-              <div className="flex justify-between w-full text-xs text-gray-500">
-                <span>Entwicklungsbedarf</span>
-                <span>Optimierungsbedarf</span>
-                <span>Läuft Bestens</span>
+        <div className="flex flex-col items-center space-y-6">
+          {questionLabels.length > 0 ? (
+            questionLabels.map((label, index) => (
+              <div key={index} className="w-full space-y-2">
+                <h3 className="text-xl font-semibold text-gray-700">{label}</h3>
+                <input
+                  type="range"
+                  name={`question${index + 1}`}
+                  min="0"
+                  max="2"
+                  value={questionsData[`question${index + 1}`]}
+                  onChange={handleSliderChange}
+                  className="w-full accent-red-600"
+                />
+                <div className="flex justify-between w-full text-xs text-gray-500">
+                  <span>Entwicklungsbedarf</span>
+                  <span>Optimierungsbedarf</span>
+                  <span>Läuft Bestens</span>
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <p className="text-sm text-gray-500">Lade Fragen...</p>
+          )}
         </div>
 
         {/* Company Data Section */}
         <form onSubmit={handleSubmit} className="space-y-4 mt-8">
-          <h3 className="text-xl font-semibold text-gray-700">Firmenangaben </h3>
+          <h3 className="text-xl font-semibold text-gray-700">Firmenangaben</h3>
 
           {/* Form Fields */}
           <div>

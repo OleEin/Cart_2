@@ -10,6 +10,10 @@ function CompanyPeople() {
   const [statusMessage, setStatusMessage] = useState('');
   const [validationErrors, setValidationErrors] = useState([]);
 
+  localStorage.setItem('concept', id);
+  const profil = localStorage.getItem("Role");
+
+
   // Daten aus dem API-Endpunkt abrufen
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -93,6 +97,8 @@ function CompanyPeople() {
               return acc;
             }, {})
           );
+          localStorage.setItem('offer', offerId);
+
           navigate(`/firma/${offerId}`);
         } else {
           setStatusMessage('Fehler: Keine offer_id zurückgegeben.');
