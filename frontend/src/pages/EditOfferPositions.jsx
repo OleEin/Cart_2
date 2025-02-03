@@ -10,12 +10,14 @@ function OfferEditDetails() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedProduct, setSelectedProduct] = useState(null);
 
+
   useEffect(() => {
     // Angebotsdetails laden
     fetch(`https://db.xocore.de/cart/offer/${id}`)
       .then((response) => response.json())
       .then((data) => setOffer(data))
       .catch((error) => console.error("Fehler beim Laden des Angebots:", error));
+
 
     // Positionsdaten laden
     fetch(`https://db.xocore.de/cart/offer/positions/${id}`)
@@ -149,7 +151,7 @@ function OfferEditDetails() {
     <div className="bg-white border border-gray-200 rounded-lg shadow p-6 flex justify-between items-center">
       <h3 className="text-xl font-semibold">Gesamtsumme</h3>
       <p className="text-lg font-medium">{positions.reduce((total, pos) => total + (parseFloat(pos.product_price_sum) || 0), 0).toFixed(2)} €</p>
-      <p>Teilnehmeranzahl: <strong>{offer.offer_teilnehmer}</strong></p> {/* Hier wird die Teilnehmeranzahl angezeigt */}
+      <p>Teilnehmeranzahl: <strong>?</strong></p> {/* Hier wird die Teilnehmeranzahl angezeigt */}
       <p>Projektumfang: <strong>{totalDays} Tage </strong></p> {/* Hier wird die Teilnehmeranzahl angezeigt */}
 
     </div>
