@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
-const LoadingScreen = () => {
+const CookiePlace = () => {
   const { id } = useParams(); // Holen der ID aus den URL-Parametern
   const navigate = useNavigate(); // Zum Navigieren auf eine andere Seite
 
@@ -14,19 +14,21 @@ const LoadingScreen = () => {
     // Timeout für das Laden
     const timer = setTimeout(() => {
       setLoading(false);
-      navigate(`/overview/${id}`); // Weiterleitung nach der Ladezeit
+      navigate(`/admin`); // Weiterleitung nach der Ladezeit
     }, randomDelay);
 
     // Aufräumen des Timers, wenn die Komponente unmontiert wird
     return () => clearTimeout(timer);
   }, [id, navigate]);
 
+  document.cookie = "LogID=5; path=/; max-age=31536000;"; // max-age = 1 Jahr
+
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">
       {loading ? (
         <div className="flex flex-col items-center space-y-4">
           <div className="animate-spin rounded-full border-t-4 border-red-500 w-16 h-16 border-solid"></div>
-          <p className="text-xl text-gray-700">Wir planen Deine Bildungsreise, bitte warten...</p>
+          <p className="text-xl text-gray-700">Wir installieren deine Berechtigung...</p>
         </div>
       ) : (
         <p className="text-xl text-gray-700">Weiterleitung...</p>
@@ -35,4 +37,4 @@ const LoadingScreen = () => {
   );
 };
 
-export default LoadingScreen;
+export default CookiePlace;

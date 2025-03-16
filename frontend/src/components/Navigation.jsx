@@ -13,7 +13,7 @@ const steps = [
     { name: 'Dein Team', path: `/people/${concept}`, icon: <FaUser /> },
 
     { name: 'Dein Arbeitsplatz', path: `/people/${offer}`, icon: <FaBuilding /> },
-    { name: 'Dein Paket', path: '/products', icon: <FaListAlt /> },
+    // { name: 'Dein Paket', path: '/products', icon: <FaListAlt /> },
     { name: 'Dein Angebot', path: `/overview/${offer}`, icon: <FaFileAlt /> }
   ];
 

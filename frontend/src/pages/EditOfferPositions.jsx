@@ -9,6 +9,7 @@ function OfferEditDetails() {
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [conceptName, setConceptName] = useState("");
 
 
   useEffect(() => {
@@ -30,7 +31,21 @@ function OfferEditDetails() {
       .then((response) => response.json())
       .then((data) => setProducts(data))
       .catch((error) => console.error("Fehler beim Laden der Produkte:", error));
+
+
+
   }, [id]);
+
+
+  useEffect(() => {
+    try {
+    // Konzept laden
+    fetch(`https://db.xocore.de/cart/concept/${offer.offer_concept}`)
+      .then((response) => response.json())
+      .then((data) => setConceptName(data))
+      .catch((error) => console.error("Fehler beim Laden der Produkte:", error));
+    }catch(error){console.error};
+  }, [offer]);
 
   // Handle Löschung einer Position
   const handleDeletePosition = (positionId) => {
@@ -124,7 +139,7 @@ function OfferEditDetails() {
         <div className="flex space-x-6">
   {/* Linker Container mit Angebotsdetails */}
   <div className="bg-white border border-gray-200 rounded-lg shadow p-6 w-2/3">
-    <h2 className="text-2xl font-bold mb-4">Angebot: {offer.offer_partner}</h2>
+    <h2 className="text-2xl font-bold mb-4">Angebot: {offer.offer_partner} - {conceptName.concept_name}</h2>
     <p>Status: <strong>{offer.offer_status}</strong></p>      
     <p>Kontaktperson: {offer.offer_partner_contactperson}</p>
     <p>Teamname: {offer.offer_teamname}</p>
@@ -140,7 +155,7 @@ function OfferEditDetails() {
     <p><strong>Frage 2:</strong> {offer.offer_question_b}</p>
     <p><strong>Frage 3:</strong> {offer.offer_question_c}</p>
     <p><strong>Digitalisierung:</strong> {offer.offer_teamdigital}%</p>
-
+  
   </div>
 </div>
 
@@ -151,7 +166,8 @@ function OfferEditDetails() {
     <div className="bg-white border border-gray-200 rounded-lg shadow p-6 flex justify-between items-center">
       <h3 className="text-xl font-semibold">Gesamtsumme</h3>
       <p className="text-lg font-medium">{positions.reduce((total, pos) => total + (parseFloat(pos.product_price_sum) || 0), 0).toFixed(2)} €</p>
-      <p>Teilnehmeranzahl: <strong>?</strong></p> {/* Hier wird die Teilnehmeranzahl angezeigt */}
+      <p>Teilnehmeranzahl: <strong>{offer ? offer.offer_teilnehmer : "Lädt..."}</strong></p>
+ {/* Hier wird die Teilnehmeranzahl angezeigt */}
       <p>Projektumfang: <strong>{totalDays} Tage </strong></p> {/* Hier wird die Teilnehmeranzahl angezeigt */}
 
     </div>

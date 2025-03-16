@@ -120,7 +120,7 @@ function CompanyPeople() {
         <h2 className="text-3xl font-bold text-center">Dein Team</h2>
 
         <form onSubmit={handleSubmit} className="space-y-4 mt-8">
-          <h3 className="text-xl font-semibold text-gray-700">Teamdaten (People)</h3>
+          <h3 className="text-xl font-semibold text-gray-700">Teamdaten</h3>
 
           {questions.map((question) => (
             <div key={question.key}>

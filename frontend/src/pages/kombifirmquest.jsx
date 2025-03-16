@@ -77,7 +77,7 @@ function CompanyAndQuestionsForm() {
         setStatusMessage('Daten erfolgreich gesendet.');
         const data = await response.json();
         const projektId = data.projektId;
-        navigate(`/loading/${id}`);
+        navigate(`/offers/${id}`);
       } else {
         setStatusMessage('Fehler beim Senden der Daten.');
       }
@@ -233,6 +233,7 @@ function CompanyAndQuestionsForm() {
               required
             />
           </div>
+          <p className="mt-4 text-sm text-gray-700"> <input type="checkbox" required /> Ich habe die Datenschutzerklärung zur Kenntnis genommen und stimme zu, dass meine Angaben zur Kontaktaufnahme und für Rückfragen dauerhaft gespeichert werden. </p>
 
           <button
             type="submit"
