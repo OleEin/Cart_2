@@ -17,6 +17,7 @@ import AllProducts from './pages/EditProducts';
 import EditProduct from './pages/EditProduct';
 import NewOffer from './pages/NewOffer';
 import CookiePlace from './pages/placecookie';
+import OverviewFirst from './pages/OverviewFristFlow';
 
 function App() {
   const currentStep = 0; // Beispiel für den aktuellen Schritt
@@ -33,6 +34,8 @@ function App() {
 
             <Route path="/overview" element={<Overview />} />
             <Route path="/overview/:id" element={<Overview />} />
+            <Route path="/summary/:id" element={<OverviewFirst />} />
+
 
             <Route path="/firmA" element={<CompanyAndQuestionsForm/>}/>
 

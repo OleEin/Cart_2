@@ -10,6 +10,22 @@ function AllOffers() {
   const [selectedOffer, setSelectedOffer] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+
+  const conceptLabels = {
+  1: "Führung im Vertrieb",
+  2: "Stationärer Vertrieb",
+  3: "Medialer Vertrieb",
+  4: "Medialer Service",
+  5: "Seiteneinsteiger",
+  6: "Stationärer Service",
+  7: "Führung im Betrieb",
+  8: "Führung auf Distanz",
+  9: "RUDI",
+  99: "Nicht benutzen",
+
+};
+
+
   useEffect(() => {
     fetch('https://db.xocore.de/cart/offers')
       .then(response => response.json())
@@ -44,11 +60,12 @@ function AllOffers() {
   const openDeleteModal = (offer) => {
     setSelectedOffer(offer);
     setIsModalOpen(true);
+    console.log('Selected offer for deletion:', offer);
   };
 
   const handleDelete = () => {
     if (!selectedOffer) return;
-    fetch(`https://db.xocore.de/cart/offer/del/${selectedOffer.id}`, {
+    fetch(`https://db.xocore.de/cart/offer/del/${selectedOffer.offer_id}`, {
       method: 'POST',
     })
       .then(() => {
@@ -61,7 +78,7 @@ function AllOffers() {
 
   return (
     <div className="p-4">
-      <h1 className="text-3xl font-bold mb-4">Offers</h1>
+      <h1 className="text-3xl font-bold mb-4">Angebote</h1>
 
       {/* Filters */}
       <div className="flex flex-wrap gap-4 mb-6">
@@ -79,8 +96,10 @@ function AllOffers() {
           onChange={(e) => setSelectedConcept(e.target.value)}
         >
           <option value="">Konzept filtern</option>
-          {[...new Set(offers.map(offer => offer.offer_concept).filter(Boolean))].map(concept => (
-            <option key={concept} value={concept}>{concept}</option>
+          {[...new Set(offers.map(offer => offer.offer_concept).filter(Boolean))].map((concept) => (
+            <option key={concept} value={concept}>
+              {concept} {conceptLabels[concept] || ""}
+            </option>
           ))}
         </select>
 
@@ -102,7 +121,7 @@ function AllOffers() {
           <thead>
             <tr className="bg-gray-100">
               <th className="p-2 text-left">Partner</th>
-              <th className="p-2 text-left">Summe</th>
+              <th className="p-2 text-left">Angebotssumme</th>
               <th className="p-2 text-left">Teilnehmer</th>
               <th className="p-2 text-left">Konzept</th>
               <th className="p-2 text-left">Status</th>
@@ -114,9 +133,9 @@ function AllOffers() {
               filteredOffers.map(offer => (
                 <tr key={offer.id} className="border-b hover:bg-gray-50">
                   <td className="p-2">{offer.offer_partner}({offer.offer_id})</td>
-                  <td className="p-2">{offer.offer_sum} €</td>
+                  <td className="p-2">  {Number(offer.offer_sum).toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })}</td>
                   <td className="p-2">{offer.offer_teilnehmer}</td>
-                  <td className="p-2">{offer.offer_concept}</td>
+                  <td className="p-2">{conceptLabels[offer.offer_concept]}</td>
                   <td className="p-2">{offer.offer_status}</td>
                   <td className="p-2 text-center">
                     <button

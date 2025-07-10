@@ -7,6 +7,7 @@ function EditProduct() {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  
 
   useEffect(() => {
     // Fetch product details by ID
@@ -157,7 +158,7 @@ function EditProduct() {
             <div>
               <label className="block text-sm font-medium mb-1">Inhalt</label>
               <textarea
-              disabled
+              
                 className="p-2 border rounded-md w-full"
                 value={product.product_inhalt}
                 onChange={(e) => handleInputChange('product_inhalt', e.target.value)}

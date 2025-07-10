@@ -26,7 +26,7 @@ function Overview() {
 
   useEffect(() => {
     // Fetch offer positions
-    fetch(`https://db.xocore.de/cart/offer/positions/${id}`)
+    fetch(`https://db.xocore.de/cart/2/offer/positions/${id}`)
       .then(response => response.json())
       .then(data => {
         // Sortieren nach positions_product_id
@@ -48,7 +48,7 @@ function Overview() {
 
   useEffect(() => {
     // Fetch offer positions
-    fetch(`https://db.xocore.de/cart/offer/${id}`)
+    fetch(`https://db.xocore.de/cart/2/offer/${id}`)
       .then(response => response.json())
       .then(data => {
         setOffer(data);
@@ -64,7 +64,7 @@ function Overview() {
   const questionLabel3 = labels[offer.offer_question_c] || "Unbekannt";
 
   useEffect(() => {
-    fetch(`https://db.xocore.de/cart/questions/offer/${id}`)
+    fetch(`https://db.xocore.de/cart/2/questions/offer/${id}`)
       .then((response) => response.json())
       .then((data) => {
         data.forEach((item) => {
@@ -91,7 +91,7 @@ function Overview() {
   useEffect(() => {
     // Fetch the product data for each position's product ID
     positions.forEach(position => {
-      fetch(`https://db.xocore.de/cart/product/${position.positions_product_id}`)
+      fetch(`https://db.xocore.de/cart/2/product/${position.positions_id}`)
         .then(response => response.json())
         .then(productData => {
           setProducts(prevProducts => ({
@@ -116,7 +116,7 @@ function Overview() {
   };
   async function downloadPdf() {
     try {
-      const endpoint = `https://db.xocore.de/offer/pdf/${id}`;
+      const endpoint = `https://db.xocore.de/offer/pdf/${offer.offer_id}`;
   
       const response = await fetch(endpoint, {
         method: 'POST'
@@ -159,7 +159,7 @@ function Overview() {
           onClick={downloadPdf}
           className="bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-red-600"
         >
-          Angebot  drucken
+          Angebot  drucken 
         </button>
         
         
@@ -176,6 +176,8 @@ function Overview() {
     </div>
     <p className="text-gray-700 mt-2">Dein Team "{offer.offer_teamname}" besteht aus {offer.offer_teilnehmer} Teilnehmer.</p>
     <p className="text-gray-700 font-semibold mt-2">Entsprechend der angegebenen digitalen Arbeitsquote des Teams werden Trainings und Coachings zu ca. {offer.offer_teamdigital}% digital und Reviews generell digital durchgeführt.</p>
+    {/* <p className="text-gray-700 font-semibold mt-2">Es sollen {offer.offer_internetrainer} Führungskräfte als Trainer ausgebildet werden.</p> */}
+
     <p className="text-gray-700 font-semibold mt-2"> Daneben verfügt Dein Team über folgende Stärkenausprägung:</p>
 
 <p className="text-gray-700 mt-2">{description1} - {questionLabel1} </p>
@@ -247,34 +249,34 @@ function Overview() {
               &times;
             </button>
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-3xl font-bold">{selectedProduct.product_name}</h2>
+              <h2 className="text-3xl font-bold">{selectedProduct.positions_product_name}</h2>
             </div>
             <p className="text-gray-700 mb-4">
-              {selectedProduct.product_description || 'Keine lange Beschreibung verfügbar.'}
+              {selectedProduct.positions_product_product_description || 'Keine lange Beschreibung verfügbar.'}
             </p>
             <h3 className="text-xl font-semibold mt-4 mb-2">Ziel der Maßnahme</h3>
             <p className="text-gray-700 mb-4">
-              {selectedProduct.product_goal || 'Keine lange Beschreibung verfügbar.'}
+              {selectedProduct.positions_product_goal || 'Keine lange Beschreibung verfügbar.'}
             </p>
 
             <div className="flex flex-col md:flex-row justify-between mt-4">
               <div className="w-full md:w-1/2">
                 <h3 className="text-xl font-semibold mb-2">Umfang und Methode</h3>
                 <p className="text-gray-500">
-                  Seminartage je Gruppe: {convertMinutesToDays(selectedProduct.product_duration_seminar)} Tage
+                  Seminartage je Gruppe: {convertMinutesToDays(selectedProduct.positions_product_duration_seminar)} Tage
                 </p>
                 <p className="text-gray-500">
-                  Coachingtage je Teilnehmer: {convertMinutesToDays(selectedProduct.product_duration_coaching)} Tage
+                  Coachingtage je Teilnehmer: {convertMinutesToDays(selectedProduct.positions_product_duration_coaching)} Tage
                 </p>
                 <p className="text-gray-500">
-                  Trainingstage je Teilnehmer: {convertMinutesToDays(selectedProduct.product_duration_training)} Tage
+                  Trainingstage je Teilnehmer: {convertMinutesToDays(selectedProduct.positions_product_duration_training)} Tage
                 </p>
               </div>
               <div className="w-full md:w-1/2 mt-4 md:mt-0 md:ml-4">
                 <h3 className="text-xl font-semibold mb-2">Seminar & Coachinginhalt</h3>
                 <ul className="list-disc list-inside text-gray-700">
        {/* Dynamisches Rendern der Inhalte */}
-       {selectedProduct.product_inhalt?.split(';').map((inhalt, index) => (
+       {selectedProduct.positions_product_inhalt?.split(';').map((inhalt, index) => (
               <li key={index}>{inhalt.trim()}</li>
             ))}
                 </ul>

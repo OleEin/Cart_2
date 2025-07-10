@@ -14,7 +14,7 @@ const LoadingScreen = () => {
     // Timeout für das Laden
     const timer = setTimeout(() => {
       setLoading(false);
-      navigate(`/overview/${id}`); // Weiterleitung nach der Ladezeit
+      navigate(`/summary/${id}`); // Weiterleitung nach der Ladezeit
     }, randomDelay);
 
     // Aufräumen des Timers, wenn die Komponente unmontiert wird
