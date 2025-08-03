@@ -293,7 +293,7 @@ const [teamGoal, setTeamGoal] = useState("");
     <p><strong>Digitalisierung:</strong> {offer.offer_teamdigital}%</p>
     <br></br>
   
-    <a href={`https://angebot.afpuk.de/overview/{offer.offer_webcode}`} target="_blank" rel="n"><strong>Link:</strong> https://angebot.afpuk.de/overview/{offer.offer_webcode}</a>
+    <a href={`https://angebot.afpuk.de/overview/${offer.offer_webcode}`} target="_blank" rel="n"><strong>Link:</strong> https://angebot.afpuk.de/overview/{offer.offer_webcode}</a>
     <p>
             <button
           onClick={() => resendmail()}

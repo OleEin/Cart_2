@@ -77,6 +77,11 @@ function CompanyAndQuestionsForm() {
         setStatusMessage('Daten erfolgreich gesendet.');
         const data = await response.json();
         const projektId = data.projektId;
+        window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'smooth'
+    });
         navigate(`/offers/${id}`);
       } else {
         setStatusMessage('Fehler beim Senden der Daten.');
