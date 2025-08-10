@@ -124,6 +124,8 @@ function AllOffers() {
               <th className="p-2 text-left">Angebotssumme</th>
               <th className="p-2 text-left">Teilnehmer</th>
               <th className="p-2 text-left">Konzept</th>
+              <th className="p-2 text-left">Manager</th>
+
               <th className="p-2 text-left">Status</th>
               <th className="p-2 text-center">Aktionen</th>
             </tr>
@@ -136,6 +138,8 @@ function AllOffers() {
                   <td className="p-2">  {Number(offer.offer_sum).toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })}</td>
                   <td className="p-2">{offer.offer_teilnehmer}</td>
                   <td className="p-2">{conceptLabels[offer.offer_concept]}</td>
+                  <td className="p-2">{conceptLabels[offer.offer_internal_manager]}</td>
+
                   <td className="p-2">{offer.offer_status}</td>
                   <td className="p-2 text-center">
                     <button

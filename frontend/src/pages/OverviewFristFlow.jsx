@@ -211,8 +211,8 @@ function OverviewFirst() {
                 <span className="text-lg font-bold text-gray-600">{`${formatNumber(position.product_price_sum)} EUR`}</span>
               </div>
               {position.positions_product_attribut === 4
-                  ? `${position.positions_product_quantity} Stücke je Unterlage ${formatNumber(position.positions_product_price)} EUR`
-                  : `Geplante Tage: ${position.positions_product_quantity} Tage je Tagessatz ${formatNumber(position.positions_product_price)} EUR`}
+                  ? `${position.positions_product_quantity} Stücke je  ${formatNumber(position.positions_product_price)} EUR`
+                  : `Geplante Tag/e: ${position.positions_product_quantity} Tag/e je Tagessatz ${formatNumber(position.positions_product_price)} EUR`}
 
 
               <div className="flex justify-end mt-auto">
@@ -263,13 +263,13 @@ function OverviewFirst() {
               <div className="w-full md:w-1/2">
                 <h3 className="text-xl font-semibold mb-2">Umfang und Methode</h3>
                 <p className="text-gray-500">
-                  Seminartage je Gruppe: {convertMinutesToDays(selectedProduct.positions_product_duration_seminar)} Tage
+                  Seminartag/e je Gruppe: {convertMinutesToDays(selectedProduct.positions_product_duration_seminar)} Tage
                 </p>
                 <p className="text-gray-500">
-                  Coachingtage je Teilnehmer: {convertMinutesToDays(selectedProduct.positions_product_duration_coaching)} Tage
+                  Coachingtag/e je Teilnehmer: {convertMinutesToDays(selectedProduct.positions_product_duration_coaching)} Tage
                 </p>
                 <p className="text-gray-500">
-                  Trainingstage je Teilnehmer: {convertMinutesToDays(selectedProduct.positions_product_duration_training)} Tage
+                  Trainingstag/e je Teilnehmer: {convertMinutesToDays(selectedProduct.positions_product_duration_training)} Tage
                 </p>
               </div>
               <div className="w-full md:w-1/2 mt-4 md:mt-0 md:ml-4">

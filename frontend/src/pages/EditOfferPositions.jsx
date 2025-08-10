@@ -13,6 +13,13 @@ function OfferEditDetails() {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editPosition, setEditPosition] = useState(null);
   const [successButton, setSuccessButton] = useState("bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded");
+const [editMail, setEditMail] = useState(false);
+const [mailInput, setMailInput] = useState("");
+const [offerStatus, setOfferStatus] = useState(""); // Optional für lokale Anzeige
+const [editManager, setEditManager] = useState(false);
+const [ManagerInput, setManagerInput] = useState("");
+const [managers, setManagers] = useState([]);
+
 
   
   // Helper function to get category color
@@ -116,6 +123,14 @@ const [teamGoal, setTeamGoal] = useState("");
 
   }, [id]);
 
+useEffect(() => {
+  fetch("https://db.xocore.de/cart/managers")
+    .then((res) => res.json())
+    .then((data) => setManagers(data))
+    .catch((err) => console.error("Fehler beim Laden der Manager:", err));
+}, []);
+
+
 
   useEffect(() => {
     try {
@@ -152,16 +167,21 @@ const [teamGoal, setTeamGoal] = useState("");
   const handleInputChange = (positionId, field, value) => {
     const updatedPositions = positions.map((pos) => {
       if (pos.positions_id === positionId) {
-        const updatedPriceSum = field === "positions_product_price" || field === "positions_product_quantity" 
-          ? (parseFloat(pos.positions_product_price) || 0) * (parseFloat(value) || 0)
-          : pos.product_price_sum;
+        const updatedPos = { ...pos, [field]: value };
 
-        return { ...pos, [field]: value, product_price_sum: updatedPriceSum };
+        const price = parseFloat(updatedPos.positions_product_price) || 0;
+        const qty = parseFloat(updatedPos.positions_product_quantity) || 0;
+
+        updatedPos.product_price_sum = price * qty;
+
+        return updatedPos;
       }
       return pos;
     });
+
     setPositions(updatedPositions);
   };
+
 
   const handleAddPosition = () => {
     if (!selectedProduct) return;
@@ -210,6 +230,47 @@ const [teamGoal, setTeamGoal] = useState("");
   const filteredProducts = products.filter((product) =>
     product.product_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const updateOfferStatus = (status) => {
+  fetch(`https://db.xocore.de/cart/offer/edit/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ offer_status: status }),
+  })
+    .then(() => {
+      setOffer((prev) => ({ ...prev, offer_status: status }));
+    })
+    .catch((error) => console.error("Fehler beim Status-Update:", error));
+};
+
+
+const updateMail = () => {
+  fetch(`https://db.xocore.de/cart/offer/edit/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ offer_partner_mail: mailInput }),
+  })
+    .then(() => {
+      setOffer((prev) => ({ ...prev, offer_partner_mail: mailInput }));
+      setEditMail(false);
+    })
+    .catch((error) => console.error("Fehler beim Mail-Update:", error));
+};
+
+const updateManager = () => {
+  fetch(`https://db.xocore.de/cart/offer/edit/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ offer_internal_manager: ManagerInput }),
+  })
+    .then(() => {
+      setOffer((prev) => ({ ...prev, offer_internal_manager: ManagerInput }));
+      setEditManager(false);
+    })
+    .catch((error) => console.error("Fehler beim Manager-Update:", error));
+};
+
+
 
   // Berechnung der Gesamtsumme
   const totalPrice = positions.reduce((acc, pos) => acc + (parseFloat(pos.product_price_sum) || 0), 0);
@@ -276,11 +337,78 @@ const [teamGoal, setTeamGoal] = useState("");
   {/* Linker Container mit Angebotsdetails */}
   <div className="bg-white border border-gray-200 rounded-lg shadow p-6 w-2/3">
     <h2 className="text-2xl font-bold mb-4">Angebot: {offer.offer_partner} - {conceptName.concept_name}</h2>
-    <p>Status: <strong>{offer.offer_status}</strong></p>      
+<p className="flex items-center space-x-2">
+  <strong>Status:</strong> <span>{offer.offer_status}</span>
+  {offer.offer_status === "review" && (
+    <>
+      <button onClick={() => updateOfferStatus("zugesagt")} title="Zusage">✅</button>
+      <button onClick={() => updateOfferStatus("abgelehnt")} title="Ablehnung">❌</button>
+    </>
+  )}
+</p>
+<p className="flex items-center space-x-2">
+  <span>Internal Manager:</span>
+  {editManager ? (
+    <select
+      className="border px-2 py-1 rounded"
+      value={ManagerInput}
+      onChange={(e) => setManagerInput(e.target.value)}
+      onBlur={updateManager}
+      autoFocus
+    >
+      <option value="">-- auswählen --</option>
+      {managers.map((manager) => (
+        <option key={manager.id || manager.trainer_name} value={manager.trainer_name}>
+          {manager.trainer_name}
+        </option>
+      ))}
+    </select>
+  ) : (
+    <>
+      <span>{offer.offer_internal_manager}</span>
+      <button
+        onClick={() => {
+          setManagerInput(offer.offer_internal_manager);
+          setEditManager(true);
+        }}
+        title="Manager bearbeiten"
+      >
+        ✏️
+      </button>
+    </>
+  )}
+</p>
     <p>Kontaktperson: {offer.offer_partner_contactperson}</p>
     <p>Teamname: {offer.offer_teamname}</p>
     <p>Adresse: {offer.offer_partner_street}, {offer.offer_partner_city}</p>
-    <p>E-Mail: {offer.offer_partner_mail}</p>
+<p className="flex items-center space-x-2">
+  <span>E-Mail:</span>
+  {editMail ? (
+    <>
+      <input
+        type="email"
+        className="border px-2 py-1 rounded"
+        value={mailInput}
+        onChange={(e) => setMailInput(e.target.value)}
+        onBlur={updateMail}
+        autoFocus
+      />
+    </>
+  ) : (
+    <>
+      <span>{offer.offer_partner_mail}</span>
+      <button
+        onClick={() => {
+          setMailInput(offer.offer_partner_mail);
+          setEditMail(true);
+        }}
+        title="Mailadresse bearbeiten"
+      >
+        ✏️
+      </button>
+    </>
+  )}
+</p>
     <p>Telefon: {offer.offer_partner_phone}</p>
   </div>
 

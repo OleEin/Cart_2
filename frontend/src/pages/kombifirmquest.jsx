@@ -140,7 +140,7 @@ function CompanyAndQuestionsForm() {
 
           {/* Form Fields */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">Firmenname</label>
+            <label className="block text-sm font-medium text-gray-700">Firmenname*</label>
             <input
               type="text"
               name="firmenname"
@@ -153,7 +153,7 @@ function CompanyAndQuestionsForm() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">Straße</label>
+              <label className="block text-sm font-medium text-gray-700">Straße*</label>
               <input
                 type="text"
                 name="strasse"
@@ -165,7 +165,7 @@ function CompanyAndQuestionsForm() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">Hausnummer</label>
+              <label className="block text-sm font-medium text-gray-700">Hausnummer*</label>
               <input
                 type="text"
                 name="hausnummer"
@@ -178,7 +178,7 @@ function CompanyAndQuestionsForm() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Ansprechpartner</label>
+            <label className="block text-sm font-medium text-gray-700">Ansprechpartner*</label>
             <input
               type="text"
               name="ansprechpartner"
@@ -191,7 +191,7 @@ function CompanyAndQuestionsForm() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">PLZ</label>
+              <label className="block text-sm font-medium text-gray-700">PLZ*</label>
               <input
                 type="text"
                 name="plz"
@@ -203,7 +203,7 @@ function CompanyAndQuestionsForm() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">Ort</label>
+              <label className="block text-sm font-medium text-gray-700">Ort*</label>
               <input
                 type="text"
                 name="ort"
@@ -216,7 +216,7 @@ function CompanyAndQuestionsForm() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Telefon</label>
+            <label className="block text-sm font-medium text-gray-700">Telefon*</label>
             <input
               type="text"
               name="telefon"
@@ -228,7 +228,7 @@ function CompanyAndQuestionsForm() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">Mailadresse</label>
+            <label className="block text-sm font-medium text-gray-700">Mailadresse*</label>
             <input
               type="email"
               name="mailadresse"

@@ -15,6 +15,7 @@ function EditOffer() {
       .then(response => response.json())
       .then(data => setOffers(data))
       .catch(error => console.error('Error fetching offers:', error));
+      console.log('Offers fetched:', offers);
   }, []);
 
   useEffect(() => {
@@ -101,10 +102,11 @@ function EditOffer() {
         <table className="table-auto w-full border-collapse">
           <thead>
             <tr className="bg-gray-100">
-              <th className="p-2 text-left">Partner</th>
+              <th className="p-2 text-left">Partner2</th>
               <th className="p-2 text-left">Summe</th>
               <th className="p-2 text-left">Teilnehmer</th>
               <th className="p-2 text-left">Konzept</th>
+              <th className="p-2 text-left">Trainer</th>
               <th className="p-2 text-left">Status</th>
               <th className="p-2 text-center">Aktionen</th>
             </tr>
@@ -113,10 +115,12 @@ function EditOffer() {
             {filteredOffers.length > 0 ? (
               filteredOffers.map(offer => (
                 <tr key={offer.id} className="border-b hover:bg-gray-50">
-                  <td className="p-2">{offer.offer_partner} ({offer.offer_id})</td>
+                  <td className="p-2">{offer.offer_partner}  ({offer.offer_id})</td>
                   <td className="p-2">{offer.offer_sum} €</td>
                   <td className="p-2">{offer.offer_teilnehmer}</td>
                   <td className="p-2">{offer.offer_concept}</td>
+                  <td className="p-2">{offer.offer_internal_manager}</td>
+
                   <td className="p-2">{offer.offer_status}</td>
                   <td className="p-2 text-center">
                     <button
